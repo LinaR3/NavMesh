@@ -1,0 +1,32 @@
+P&W Temple Edition — montaje del mapa para NavMesh
+Composición frontal y simétrica basada en la referencia del paquete P&W Temple Edition. El santuario usa Entrance_3B (15.7 m de ancho x 5.6 m de fondo a escala 0.30), dejando un paseo amplio por delante y por ambos lados.
+Huella del patio: 48 m de ancho x 62 m de largo (Z = -19 a 43); losas modulares HD_Platform_6A colocadas horizontales sobre terrazas de piedra continuas con collider.
+Niveles transitables: 0.50 m / 2.567 m / 4.767 m.
+Player: Aventurera; CharacterController radius 0.34 m, height 2.04 m, stepOffset 0.35 m, slopeLimit 45°. Gravedad/movimiento propio; NO tiene NavMeshAgent ni Rigidbody.
+Cámara: tercera persona detrás de la aventurera, seguimiento, órbita con botón derecho y rueda para zoom; colisión contra el escenario.
+Golems: 8 instancias del mismo prefab Polyart_Golem; escala 0.31 = ~2.06 m, NavMeshAgent radius 0.48 m, height 2.06 m, persecución del tag Player.
+Mini laberinto: muros modulares P&W Unique_Wall_B, altura montada ~2.70 m, aberturas centrales de entrada/salida y recorrido en zigzag en el patio intermedio.
+Superficie NavMesh: solo la jerarquía Geometria_Estatica_NavMesh; Geometry = Physics Colliders; voxel = 0.12 m.
+Las colisiones originales de las escalinatas decorativas se desactivan; rampas invisibles con BoxCollider mantienen una superficie continua para el jugador y el bake.
+Ruta de prueba: NavMesh: 821 vértices triangulados. 
+- baja oeste: origen=True, destino=True, rutaCompleta=True, esquinas=4.
+- baja este: origen=True, destino=True, rutaCompleta=True, esquinas=6.
+- rampa baja: origen=True, destino=True, rutaCompleta=True, esquinas=3.
+- entrada del laberinto: origen=True, destino=True, rutaCompleta=True, esquinas=2.
+- corredor este del laberinto: origen=True, destino=True, rutaCompleta=True, esquinas=4.
+- salida del laberinto: origen=True, destino=True, rutaCompleta=True, esquinas=6.
+- terraza alta al pie de la rampa: origen=True, destino=True, rutaCompleta=True, esquinas=2.
+- terraza superior izquierda: origen=True, destino=True, rutaCompleta=True, esquinas=2.
+- terraza superior derecha: origen=True, destino=True, rutaCompleta=True, esquinas=3.
+Conectividad NavMesh de todos los segmentos: APROBADA. Esta comprobación calcula rutas; la prueba física con CharacterController se ejecuta en Play Mode con F8.
+Rutas NavMesh de cada golem hacia la Player:
+- Golem_01_Plaza_Izquierda → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=2.
+- Golem_02_Plaza_Derecha → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=2.
+- Golem_03_Laberinto_Entrada → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=4.
+- Golem_04_Laberinto_Corredor → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=6.
+- Golem_05_Laberinto_Salida → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=6.
+- Golem_06_Patio_Central → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=4.
+- Golem_07_Terraza_Izquierda → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=13.
+- Golem_08_Terraza_Derecha → Player: origen=True, rutaCompleta=True, estado=PathComplete, esquinas=12.
+Conectividad de persecución de los 8 golems: APROBADA.
+Auditoría física Player: entrar en Play Mode y pulsar F8; el personaje recorre los niveles, el laberinto y vuelve, confirmando CharacterController grounded y NavMesh.SamplePosition en cada punto.

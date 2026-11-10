@@ -1,0 +1,31 @@
+P&W Temple Edition — dimensiones de piezas seleccionadas (metros Unity)
+Las medidas son de Renderer/Collider; centro relativo al pivote del prefab.
+
+6x6x.25_Floor_A: 6.00 x 0.50 x 6.00 m; centro local (0.00, 0.00, 0.00); renderers 1, colliders 1
+8x8x.25_Floor_A: 8.00 x 0.50 x 8.00 m; centro local (0.00, 0.00, 0.00); renderers 1, colliders 1
+Basic_Stairs_1A: 4.00 x 3.99 x 6.27 m; centro local (0.00, 0.00, 0.14); renderers 2, colliders 2
+Ramp_1A: 8.00 x 4.00 x 6.00 m; centro local (0.96, 0.70, 0.00); renderers 1, colliders 1
+Stairs_Platform_1A: 13.99 x 4.00 x 16.00 m; centro local (0.86, 0.00, 0.00); renderers 5, colliders 5
+HD_Platform_2A: 4.00 x 0.30 x 4.00 m; centro local (0.00, 0.03, 0.00); renderers 1, colliders 1
+HD_Platform_6A: 8.00 x 0.30 x 8.00 m; centro local (0.00, 0.03, 0.00); renderers 1, colliders 1
+HD_Arch_1A: 5.76 x 6.62 x 1.21 m; centro local (0.00, -0.19, 0.00); renderers 1, colliders 1
+Entrance_1A: 16.55 x 10.61 x 7.40 m; centro local (-0.01, -1.80, 0.00); renderers 11, colliders 11
+Entrance_3A: 37.99 x 10.62 x 18.53 m; centro local (-11.14, 3.31, 0.01); renderers 21, colliders 21
+Temple_Stairs_Entrance_1A: 20.00 x 4.00 x 6.30 m; centro local (0.00, 0.00, 1.05); renderers 17, colliders 17
+Temple_Stairs_Entrance_1B: 67.19 x 6.08 x 13.06 m; centro local (0.00, 1.04, -1.63); renderers 29, colliders 29
+Unique_Platform_1A: 4.52 x 1.75 x 4.62 m; centro local (0.01, 0.00, 0.00); renderers 4, colliders 4
+Unique_Tunnel_1A: 8.00 x 10.50 x 4.30 m; centro local (0.00, 2.83, 0.00); renderers 2, colliders 2
+Unique_Stack_A: 2.20 x 12.00 x 2.40 m; centro local (0.00, 0.00, 0.00); renderers 3, colliders 3
+Unique_Stack_B: 2.20 x 12.00 x 2.40 m; centro local (0.00, 0.00, 0.00); renderers 3, colliders 3
+Unique_Stack_C: 2.20 x 12.00 x 2.40 m; centro local (0.00, 0.00, 0.00); renderers 3, colliders 3
+Unique_Stack_C2: 2.20 x 10.55 x 4.89 m; centro local (0.00, -0.72, -1.24); renderers 3, colliders 3
+Barrier_Group_1A: 3.13 x 1.85 x 0.75 m; centro local (-0.26, 0.00, 0.00); renderers 3, colliders 3
+Single_Group_1A: 6.19 x 4.02 x 2.20 m; centro local (0.01, 0.21, 0.00); renderers 3, colliders 3
+HD_Wall_2A: 2.20 x 4.00 x 1.20 m; centro local (0.00, -0.06, 0.00); renderers 1, colliders 1
+HD_Rounded_Wall_3A: 4.20 x 0.77 x 2.88 m; centro local (0.00, -0.01, 0.00); renderers 1, colliders 1
+Torch_Post_1A: 2.00 x 3.06 x 2.00 m; centro local (0.00, -0.50, 0.00); renderers 1, colliders 1
+Bowl_1A: 2.00 x 1.06 x 2.00 m; centro local (0.00, -0.10, 0.00); renderers 1, colliders 1
+Unique_Full_Railing_1: 4.50 x 1.75 x 0.50 m; centro local (0.00, 0.12, 0.00); renderers 1, colliders 1
+Adventures_woman_02: 1.96 x 2.04 x 0.53 m; centro local (0.00, 0.95, -0.04); renderers 16, colliders 3
+Polyart_Golem: 6.71 x 6.63 x 6.36 m; centro local (0.18, 1.90, 0.24); renderers 1, colliders 0
+HP_Golem: 7.95 x 6.29 x 6.08 m; centro local (0.18, 1.84, 0.32); renderers 1, colliders 0
