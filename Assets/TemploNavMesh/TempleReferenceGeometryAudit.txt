@@ -1,0 +1,6 @@
+REVISIÓN GEOMÉTRICA — templo maya
+Plataformas con MeshCollider (incluye pisos y laberinto): 1022
+Niveles de diseño (m): 0.00, 6.08, 10.08, 14.08
+Rampas: 6 (malla y MeshCollider en cada una)
+Terreno: 300 x 230 m; explanada central nominal en Y=0
+Nota: inspección estática de colocación; NavMesh pendiente de la etapa posterior de aprobación.

@@ -16,19 +16,20 @@ public sealed class AventureraPlayerController : MonoBehaviour
     bool inputEnabled = true;
 
     public CharacterController Controller => controller;
+    public void SetController(CharacterController value) => controller = value;
+    public void SetCamera(Transform cameraReference) => cameraTransform = cameraReference;
     public float Gravity => gravity;
     public bool InputEnabled { get => inputEnabled; set => inputEnabled = value; }
 
     void Awake()
     {
         if (controller == null) controller = GetComponent<CharacterController>();
+        if (controller != null) controller.detectCollisions = true;
         if (cameraTransform == null && Camera.main != null) cameraTransform = Camera.main.transform;
 
         var animator = GetComponentInChildren<Animator>();
         if (animator != null) animator.applyRootMotion = false;
     }
-
-    public void SetCamera(Transform cameraReference) => cameraTransform = cameraReference;
 
     void Update()
     {

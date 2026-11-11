@@ -19,6 +19,8 @@ public sealed class ThirdPersonAdventureCamera : MonoBehaviour
     bool initialized;
 
     public Transform Target { get => target; set => target = value; }
+    public float Distance { get => distance; set => distance = Mathf.Clamp(value, minDistance, maxDistance); }
+    public float Pitch { get => pitch; set => pitch = Mathf.Clamp(value, -8f, 48f); }
 
     void Start()
     {
@@ -65,7 +67,7 @@ public sealed class ThirdPersonAdventureCamera : MonoBehaviour
         foreach (var hit in hits)
         {
             if (hit.collider == null || hit.collider.transform == target || hit.collider.transform.IsChildOf(target)) continue;
-            desiredDistance = Mathf.Min(desiredDistance, Mathf.Max(minDistance * 0.55f, hit.distance - collisionPadding));
+            desiredDistance = Mathf.Min(desiredDistance, Mathf.Max(0.35f, hit.distance - collisionPadding));
         }
 
         var desiredPosition = pivot + direction * desiredDistance;

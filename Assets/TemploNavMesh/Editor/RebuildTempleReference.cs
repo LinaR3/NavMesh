@@ -108,33 +108,39 @@ public static class RebuildTempleReference
         var lower = Group("00_Acceso_y_Plaza_Baja_48x24m", environment.transform);
         TileFloor(lower, new[] { -20f, -12f, -4f, 4f, 12f, 20f }, new[] { -15f, -7f, 1f }, LowerSurface);
 
+        var stairs = Group("01_Escalinatas_Centrales", environment.transform);
         var middle = Group("02_Patio_Central_48x16m", environment.transform);
         TileFloor(middle, new[] { -20f, -12f, -4f, 4f, 12f, 20f }, new[] { 13f, 21f }, MiddleSurface);
 
+        var architecture = Group("03_Arquitectura_Simetrica", environment.transform);
         var upper = Group("04_Terraza_Superior_40x16m", environment.transform);
-        // Begin the upper platform at z=27 so it meets the ramp's end at z=26.8.
-        // Starting it at z=25 created a raised slab face that the real Player hit.
-        TileFloor(upper, new[] { -16f, -8f, 0f, 8f, 16f }, new[] { 31f, 39f }, UpperSurface);
+        // The 5x2 grid spans X=-20..20 and Z=27..43 at Y=4.767 m.
+        // The central 14 m lane is reserved for the level landing from z=27..28.
+        TileFloor(upper, new[] { -16f, -8f, 0f, 8f, 16f }, new[] { 31f, 39f }, UpperSurface,
+            frontLaneWidth: 14f, frontLaneEndZ: 28f);
 
-        var stairs = Group("01_Escalinatas_Centrales", environment.transform);
         // The package's built structures use a large native scale. Bounds-centering
         // places their walkable ends flush with the three tiled levels.
         var mainStairs = PlaceScaled(MainStairsPrefab, stairs, "Escalinata_Principal_30m", new Vector3(0.45f, 0.34f, 0.34f), Quaternion.identity,
             new Vector3(0f, LowerSurface + 0.34f * (6.08f * 0.5f), 7f));
+        // Bounds are 6.30 m deep; at 0.55 scale the stair ends at z=27.0,
+        // flush with the upper terrace edge, while overlapping the middle floor.
         var innerStairs = PlaceScaled(InnerStairsPrefab, stairs, "Escalinata_Al_Santuario_15m", new Vector3(0.75f, 0.55f, 0.55f), Quaternion.identity,
-            new Vector3(0f, MiddleSurface + 0.55f * (4.00f * 0.5f), 25f));
+            new Vector3(0f, MiddleSurface + 0.55f * (4.00f * 0.5f), 25.27f));
         DisableAuthoredColliders(mainStairs);
         DisableAuthoredColliders(innerStairs);
         // The rendered steps stay visible. These hidden, collidable ramps provide
         // a continuous walkable slope for the CharacterController and the bake.
+        // End exactly at the middle terrace's front edge (z=9). The previous
+        // 0.7 m overlap left a vertical lip that stopped the CharacterController.
         CreateNavMeshRamp(stairs, "Guia_NavMesh_Bajo_a_Patio", new Vector3(0f, LowerSurface, 4.3f),
-            new Vector3(0f, MiddleSurface, 9.7f), 26f, 0.12f);
+            new Vector3(0f, MiddleSurface, 9f), 26f, 0.12f);
+        // The upper ramp meets the terrace at z=27. A level, one-metre landing
+        // extends the walkable top over the navmesh seam without a vertical lip.
+        CreateNavMeshLanding(stairs, "Aterrizaje_NavMesh_Santuario", UpperSurface, 27f, 28f, 14f, 0.12f);
         CreateNavMeshRamp(stairs, "Guia_NavMesh_Patio_a_Santuario", new Vector3(0f, MiddleSurface, 21.8f),
-            // Overlap the upper slab by 1 m. The prior edge-to-edge seam let the
-            // CharacterController pass but NavMesh erosion split the agent paths.
-            new Vector3(0f, UpperSurface, 28f), 14f, 0.12f);
+            new Vector3(0f, UpperSurface, 27f), 14f, 0.12f);
 
-        var architecture = Group("03_Arquitectura_Simetrica", environment.transform);
         // Broaden the flanking entrances across X while keeping their walls upright;
         // the previous uniform shrink made each building read like a narrow vertical panel.
         var pavilionScale = new Vector3(0.8f, 0.4f, 0.65f);
@@ -190,14 +196,14 @@ public static class RebuildTempleReference
         var golems = Group("02_Golems_NavMesh", rootObject.transform);
         var golemActors = new[]
         {
-            PlaceGolem(GolemPrefab, golems, "Golem_01_Plaza_Izquierda", new Vector3(-12f, LowerSurface, -3f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_02_Plaza_Derecha", new Vector3(12f, LowerSurface, -8f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_03_Laberinto_Entrada", new Vector3(7.4f, MiddleSurface, 12.2f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_04_Laberinto_Corredor", new Vector3(7.4f, MiddleSurface, 16.3f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_05_Laberinto_Salida", new Vector3(7.4f, MiddleSurface, 19.2f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_06_Patio_Central", new Vector3(-7f, MiddleSurface, 12f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_07_Terraza_Izquierda", new Vector3(-16f, UpperSurface, 29f), surface.agentTypeID),
-            PlaceGolem(GolemPrefab, golems, "Golem_08_Terraza_Derecha", new Vector3(16f, UpperSurface, 37f), surface.agentTypeID)
+            PlaceGolem(GolemPrefab, golems, "Golem_01_Plaza_Izquierda", new Vector3(-12f, LowerSurface, -3f), surface.agentTypeID, 0),
+            PlaceGolem(GolemPrefab, golems, "Golem_02_Plaza_Derecha", new Vector3(12f, LowerSurface, -8f), surface.agentTypeID, 1),
+            PlaceGolem(GolemPrefab, golems, "Golem_03_Laberinto_Entrada", new Vector3(7.4f, MiddleSurface, 12.2f), surface.agentTypeID, 2),
+            PlaceGolem(GolemPrefab, golems, "Golem_04_Laberinto_Corredor", new Vector3(7.4f, MiddleSurface, 16.3f), surface.agentTypeID, 3),
+            PlaceGolem(GolemPrefab, golems, "Golem_05_Laberinto_Salida", new Vector3(7.4f, MiddleSurface, 19.2f), surface.agentTypeID, 4),
+            PlaceGolem(GolemPrefab, golems, "Golem_06_Patio_Central", new Vector3(-7f, MiddleSurface, 12f), surface.agentTypeID, 5),
+            PlaceGolem(GolemPrefab, golems, "Golem_07_Terraza_Izquierda", new Vector3(-16f, UpperSurface, 29f), surface.agentTypeID, 6),
+            PlaceGolem(GolemPrefab, golems, "Golem_08_Terraza_Derecha", new Vector3(16f, UpperSurface, 37f), surface.agentTypeID, 7)
         };
 
         cameraObject = SetupCamera(cameraObject, rootObject.transform, heroine.transform);
@@ -328,7 +334,8 @@ public static class RebuildTempleReference
         return group.transform;
     }
 
-    static void TileFloor(Transform parent, float[] xCenters, float[] zCenters, float surfaceHeight)
+    static void TileFloor(Transform parent, float[] xCenters, float[] zCenters, float surfaceHeight,
+        float frontLaneWidth = 0f, float frontLaneEndZ = 0f)
     {
         var material = GetFloorMaterial();
         var slab = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -337,7 +344,40 @@ public static class RebuildTempleReference
         slab.transform.position = new Vector3(0f, surfaceHeight - 0.35f, zCenters.Average());
         slab.transform.localScale = new Vector3(xCenters.Length * 8f, 0.5f, zCenters.Length * 8f);
         slab.GetComponent<Renderer>().sharedMaterial = material;
+        // Every HD_Platform_6A tile has a full 8x8 m mesh collider. Keeping a
+        // second collider 0.1 m below those tiles creates stacked walkable faces.
+        var foundationCollider = slab.GetComponent<Collider>();
+        if (foundationCollider != null) Object.DestroyImmediate(foundationCollider);
         SetStatic(slab.transform);
+
+        // Hidden box colliders exactly at the visible tile height provide the
+        // physics/NavMesh surface; detailed tile mesh colliders are redundant.
+        var floorWidth = xCenters.Length * 8f;
+        var floorStartZ = zCenters.Min() - 4f;
+        var floorEndZ = zCenters.Max() + 4f;
+        var supportCenterY = surfaceHeight - 0.05f;
+        if (frontLaneWidth <= 0f)
+        {
+            CreateFloorSupport(parent, "Collider_Piso_Continuo_Alineado",
+                new Vector3(0f, supportCenterY, (floorStartZ + floorEndZ) * 0.5f),
+                new Vector3(floorWidth, 0.1f, floorEndZ - floorStartZ));
+        }
+        else
+        {
+            var laneEndZ = Mathf.Clamp(frontLaneEndZ, floorStartZ, floorEndZ);
+            var laneDepth = laneEndZ - floorStartZ;
+            var sideWidth = (floorWidth - frontLaneWidth) * 0.5f;
+            CreateFloorSupport(parent, "Collider_Piso_Continuo_Alineado",
+                new Vector3(0f, supportCenterY, (laneEndZ + floorEndZ) * 0.5f),
+                new Vector3(floorWidth, 0.1f, floorEndZ - laneEndZ));
+            foreach (var side in new[] { -1f, 1f })
+            {
+                CreateFloorSupport(parent, side < 0f ? "Collider_Ala_Izquierda_Alineada" : "Collider_Ala_Derecha_Alineada",
+                    new Vector3(side * (frontLaneWidth * 0.5f + sideWidth * 0.5f), supportCenterY,
+                        (floorStartZ + laneEndZ) * 0.5f),
+                    new Vector3(sideWidth, 0.1f, laneDepth));
+            }
+        }
 
         int row = 0;
         foreach (var z in zCenters)
@@ -345,12 +385,37 @@ public static class RebuildTempleReference
             int column = 0;
             foreach (var x in xCenters)
             {
-                Place(FloorPrefab, parent, "Baldosa_" + row + "_" + column, 1f, Quaternion.identity,
+                var tile = Place(FloorPrefab, parent, "Baldosa_" + row + "_" + column, 1f, Quaternion.identity,
                     new Vector3(x, surfaceHeight - 0.15f, z));
+                foreach (var tileCollider in tile.GetComponentsInChildren<Collider>(true))
+                    tileCollider.enabled = false;
                 column++;
             }
             row++;
         }
+    }
+
+    static void CreateFloorSupport(Transform parent, string name, Vector3 center, Vector3 size)
+    {
+        var floorSupport = new GameObject(name);
+        floorSupport.transform.SetParent(parent, false);
+        floorSupport.transform.position = center;
+        floorSupport.AddComponent<BoxCollider>().size = size;
+        SetStatic(floorSupport.transform);
+    }
+
+    static GameObject CreateNavMeshLanding(Transform parent, string name, float surfaceHeight,
+        float startZ, float endZ, float width, float thickness)
+    {
+        var landing = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        landing.name = name;
+        landing.transform.SetParent(parent, false);
+        landing.transform.position = new Vector3(0f, surfaceHeight - thickness * 0.5f, (startZ + endZ) * 0.5f);
+        landing.transform.localScale = new Vector3(width, thickness, endZ - startZ);
+        var renderer = landing.GetComponent<Renderer>();
+        if (renderer != null) renderer.enabled = false;
+        SetStatic(landing.transform);
+        return landing;
     }
 
     static void BuildMiniMaze(Transform environment)
@@ -480,20 +545,35 @@ public static class RebuildTempleReference
         model.transform.position += targetCenter - bounds.center;
 
         DisableAuthoredColliders(model);
+        var animator = model.GetComponentInChildren<Animator>(true);
+        var humanoidAvatar = AssetDatabase.LoadAllAssetsAtPath("Assets/Adventures_woman/Mesh/Adventures_woman.FBX")
+            .OfType<Avatar>()
+            .FirstOrDefault(avatar => avatar.isHuman);
+        if (animator != null)
+        {
+            animator.avatar = humanoidAvatar;
+            animator.runtimeAnimatorController = null;
+            animator.applyRootMotion = false;
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        }
+        if (humanoidAvatar == null)
+            Debug.LogError("No se encontró el Avatar Humanoid de Adventures_woman.FBX; la pose de movimiento no podrá aplicarse.");
+
         var controller = actor.AddComponent<CharacterController>();
         controller.radius = 0.34f;
         controller.height = 2.04f;
         controller.center = new Vector3(0f, 1.02f, 0f);
         controller.slopeLimit = 45f;
-        controller.stepOffset = 0.35f;
-        controller.skinWidth = 0.06f;
+        controller.stepOffset = 0.25f;
+        controller.skinWidth = 0.04f;
         controller.minMoveDistance = 0f;
         actor.AddComponent<AventureraPlayerController>();
+        actor.AddComponent<AventureraLocomotionPose>();
         actor.AddComponent<AventureraRouteAudit>();
         return actor;
     }
 
-    static GameObject PlaceGolem(string path, Transform parent, string name, Vector3 footPosition, int agentTypeID)
+    static GameObject PlaceGolem(string path, Transform parent, string name, Vector3 footPosition, int agentTypeID, int orbitSlot)
     {
         var asset = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         if (asset == null) throw new System.InvalidOperationException("No se encontró " + path);
@@ -508,26 +588,43 @@ public static class RebuildTempleReference
         var targetCenter = new Vector3(footPosition.x, footPosition.y + bounds.extents.y, footPosition.z);
         model.transform.position += targetCenter - bounds.center;
 
-        var trigger = actor.AddComponent<CapsuleCollider>();
-        trigger.radius = 0.46f;
-        trigger.height = 2.06f;
-        trigger.center = new Vector3(0f, 1.03f, 0f);
-        trigger.isTrigger = true;
+        // The NavMeshAgent remains the only movement authority; this kinematic body
+        // lets its solid capsule take part in contacts without gravity or force drift.
+        var body = actor.AddComponent<Rigidbody>();
+        body.isKinematic = true;
+        body.useGravity = false;
+        body.constraints = RigidbodyConstraints.FreezeRotation;
+        body.interpolation = RigidbodyInterpolation.Interpolate;
+        body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+
+        var solidCollider = actor.AddComponent<CapsuleCollider>();
+        solidCollider.radius = 0.68f;
+        solidCollider.height = 1.8f;
+        solidCollider.center = new Vector3(0f, 0.9f, 0f);
+        solidCollider.isTrigger = false;
 
         var agent = actor.AddComponent<NavMeshAgent>();
         agent.agentTypeID = agentTypeID;
-        agent.radius = 0.48f;
-        agent.height = 2.06f;
+        agent.radius = 0.68f;
+        agent.height = 1.8f;
         agent.baseOffset = 0f;
-        agent.speed = 2.5f;
-        agent.acceleration = 7f;
+        agent.speed = 2.8f;
+        agent.acceleration = 9f;
         agent.angularSpeed = 360f;
         agent.stoppingDistance = 1.1f;
         agent.autoBraking = true;
         agent.autoRepath = true;
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
         agent.areaMask = NavMesh.AllAreas;
-        actor.AddComponent<GolemChasePlayer>();
+        var chase = actor.AddComponent<GolemChasePlayer>();
+        chase.ConfigureOrbitSlot(orbitSlot, 8);
+        var chaseProperties = new SerializedObject(chase);
+        chaseProperties.FindProperty("orbitSlot").intValue = orbitSlot;
+        chaseProperties.FindProperty("orbitSlotCount").intValue = 8;
+        chaseProperties.FindProperty("approachRadius").floatValue = 3.2f;
+        chaseProperties.FindProperty("minimumPlayerClearance").floatValue = 2.4f;
+        chaseProperties.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(chase);
         return actor;
     }
 
@@ -547,6 +644,8 @@ public static class RebuildTempleReference
         var follower = cameraObject.GetComponent<ThirdPersonAdventureCamera>();
         if (follower == null) follower = cameraObject.AddComponent<ThirdPersonAdventureCamera>();
         follower.Target = target;
+        follower.Distance = 8.0f;
+        follower.Pitch = 42f;
         return cameraObject;
     }
 
@@ -661,14 +760,14 @@ public static class RebuildTempleReference
         report.AppendLine("Composición frontal y simétrica basada en la referencia del paquete P&W Temple Edition. El santuario usa Entrance_3B (15.7 m de ancho x 5.6 m de fondo a escala 0.30), dejando un paseo amplio por delante y por ambos lados.");
         report.AppendLine("Huella del patio: 48 m de ancho x 62 m de largo (Z = -19 a 43); losas modulares HD_Platform_6A colocadas horizontales sobre terrazas de piedra continuas con collider.");
         report.AppendLine("Niveles transitables: 0.50 m / 2.567 m / 4.767 m.");
-        report.AppendLine("Player: Aventurera; CharacterController radius 0.34 m, height 2.04 m, stepOffset 0.35 m, slopeLimit 45°. Gravedad/movimiento propio; NO tiene NavMeshAgent ni Rigidbody.");
-        report.AppendLine("Cámara: tercera persona detrás de la aventurera, seguimiento, órbita con botón derecho y rueda para zoom; colisión contra el escenario.");
-        report.AppendLine("Golems: 8 instancias del mismo prefab Polyart_Golem; escala 0.31 = ~2.06 m, NavMeshAgent radius 0.48 m, height 2.06 m, persecución del tag Player.");
+        report.AppendLine("Player: Aventurera; CharacterController radius 0.34 m, height 2.04 m, stepOffset 0.25 m, slopeLimit 45°. Gravedad/movimiento propio y locomoción Humanoid procedural; NO tiene NavMeshAgent ni Rigidbody.");
+        report.AppendLine("Cámara: tercera persona elevada detrás de la aventurera, seguimiento, órbita con botón derecho y rueda para zoom; colisión con el escenario y los golems.");
+        report.AppendLine("Golems: 8 instancias del mismo prefab Polyart_Golem; escala 0.31; NavMeshAgent y cápsula física sólida radius 0.68 m, height 1.80 m, Rigidbody cinemático sin gravedad, velocidad 2.8 m/s y persecución en una formación distribuida a 3.2 m del tag Player, con 2.4 m de separación mínima.");
         report.AppendLine("Mini laberinto: muros modulares P&W Unique_Wall_B, altura montada ~2.70 m, aberturas centrales de entrada/salida y recorrido en zigzag en el patio intermedio.");
         report.AppendLine("Superficie NavMesh: solo la jerarquía Geometria_Estatica_NavMesh; Geometry = Physics Colliders; voxel = 0.12 m.");
-        report.AppendLine("Las colisiones originales de las escalinatas decorativas se desactivan; rampas invisibles con BoxCollider mantienen una superficie continua para el jugador y el bake.");
+        report.AppendLine("Cada terraza tiene colliders de soporte alineados con sus baldosas; en la terraza superior se dividen alrededor del canal de 14 m de la escalinata, y un descanso invisible de 14 x 1 m completa la unión al mismo nivel. Los colliders redundantes de baldosas, bases visuales y escalinatas decorativas están desactivados. Rampas invisibles con BoxCollider conectan físicamente las tres alturas.");
         report.AppendLine("Ruta de prueba: " + pathReport);
-        report.AppendLine("Auditoría física Player: entrar en Play Mode y pulsar F8; el personaje recorre los niveles, el laberinto y vuelve, confirmando CharacterController grounded y NavMesh.SamplePosition en cada punto.");
+        report.AppendLine("Auditoría física Player: entrar en Play Mode y pulsar F8 para recorrer los 28 destinos con CharacterController y comprobar grounded y NavMesh.SamplePosition.");
         File.WriteAllText("Assets/TemploNavMesh/TempleLayout.txt", report.ToString());
         AssetDatabase.Refresh();
     }
